@@ -1,4 +1,4 @@
-from endpoint_reader import EndpointReader
+from scripts.endpoint_reader import EndpointReader
 import sys
 
 def main():
