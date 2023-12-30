@@ -1,5 +1,5 @@
-from scripts.http_requests import HTTPRequester
 from unittest import TestCase
+from scripts.http_requests import HTTPRequester
 
 class TestHTTPRequester(TestCase):
     '''Tests for HTTPRequester'''
