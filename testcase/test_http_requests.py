@@ -4,10 +4,18 @@ from scripts.http_requests import HTTPRequester
 class TestHTTPRequester(TestCase):
     '''Tests for HTTPRequester'''
 
-    def test_query_endpoints(self):
+    def test_query_endpoints_empty(self):
+        '''Test query of empty endpoints dictionary'''
+        responses = HTTPRequester.query_endpoints({})
+        self.assertIsNotNone(responses)
+        self.assertEqual(responses, [])
+
+    def test_query_endpoints_normal(self):
+        '''Testing non-empty query endpoints would require a mock'''
         pass
 
     def test_query_endpoint(self):
+        '''Testing a query endpoint would require a mock'''
         pass
 
     def test_get_endpoint_domain_degen(self):

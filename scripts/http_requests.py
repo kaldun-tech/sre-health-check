@@ -43,14 +43,16 @@ class HTTPRequester:
         if url is None:
             return ''
 
-        startIndex = 0
-        if url.startswith('http://'):
-            startIndex = len('http://')
-        elif url.startswith('https://'):
-            startIndex = len('https://')
+        # Advanced past http:// or https://
+        prefixes = ['http://', 'https://']
+        for prefix in prefixes:
+            if url.startswith(prefix):
+                url = url[len(prefix):]
+                break
 
+        # Truncate at separator /
         endIndex = url.find('/')
-        if endIndex == -1:
-            # Separator / not found
-            endIndex = len(url)
-        return url[startIndex : endIndex]
+        if -1 < endIndex:
+            return url[:endIndex]
+
+        return url
