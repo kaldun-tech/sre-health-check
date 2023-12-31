@@ -7,7 +7,7 @@ EMPTY_FILE_PATH = os.path.join(CURRENT_DIR, '..', 'data', 'empty.yml')
 NONEXISTENT_FILE_PATH = 'fakenews'
 
 class TestEndpointReader(TestCase):
-    '''Tests for EndpointReader'''
+    '''Tests for EndpointReader, TODO use mocks instead of datafiles'''
     def test_nonexistent_filepath(self):
         with self.assertRaises(FileNotFoundError) as context:
             EndpointReader.read_endpoints(NONEXISTENT_FILE_PATH)

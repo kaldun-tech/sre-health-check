@@ -6,40 +6,66 @@ class AvailabilityMetrics():
 
     def __init__(self):
         '''Constructor for AvailabilityCheck'''
-        # Maps domain to Tuple: (up_count, total_count)
+        # Maps domain to Tuple: (up_count, down_count)
         self.availability_dict = {}
 
-    def get_availability(self, domain: str):
-        '''Get availability for domain as Tuple (up_count, total_count)'''
+    def get_availability(self, domain: str) -> dict:
+        '''Get availability for domain as Tuple (up_count, down_count)'''
         return self.availability_dict[domain] if domain in self.availability_dict.keys() else (0, 0)
 
-    def update_availability(self, domain : str, status_code, latency):
-        '''Update availability for domain and Response status code'''
+    @staticmethod
+    def is_endpoint_up(status_code : int, elapsed_ms : int) -> bool:
+        '''Test if endpoint is up
+        Arguments:
+            status_code: Query status code, considered up from 200 to 299
+            elapsed_ms: Query elapsed time, considered up from 0 to 500
+        Returns:
+            True if endpoint is up, False otherwise
+        '''
+        return 200 <= status_code < 300 and elapsed_ms < 500
+
+    def update_availability(self, domain : str, status_code : int, elapsed_ms : int):
+        '''Update availability for domain and Response status code
+        Arguments:
+            status_code: Query status code, considered up from 200 to 299
+            elapsed_ms: Query elapsed time, considered up from 0 to 500
+        '''
         availability = self.get_availability(domain)
-        if 200 <= status_code < 300 and latency < 500:
+        if AvailabilityMetrics.is_endpoint_up(status_code, elapsed_ms):
             # Increment up count
             availability[0] += 1
-        # Increment total count
-        availability[1] += 1
+        else:
+            # Increment down count
+            availability[1] += 1
         # Update cache
         self.availability_dict[domain] = availability
 
-    def get_percent_available(self, domain : str):
-        '''Computes the availability percentage for a domain, 0 for not found'''
-        (up_count, total_count) = self.get_availability(domain)
-        return 100 * up_count / total_count if 0 < total_count else 0
+    def get_percent_available(self, domain : str) -> float:
+        '''Computes the availability percentage for a domain, 0 for not found
+        Arguments:
+            domain: Domain to check
+        Returns: Availability percentage as float
+        '''
+        (up_count, down_count) = self.get_availability(domain)
+        total_count = up_count + down_count
+        return (100 * up_count / total_count) if 0 < total_count else 0
 
-    def update_metrics(self, response : Response):
-        '''Updates metrics for individual Response'''
+    def update_metrics_for_response(self, response : Response):
+        '''Updates metrics for individual Response
+        Arguments:
+            response: Single response to update metrics for'''
         domain = HTTPRequester.get_endpoint_domain(response.url)
-        status_code = response.status_code
-        latency = response.elapsed
-        self.update_availability(domain, status_code, latency)
+        self.update_availability(domain, response.status_code, response.elapsed)
 
-    def handle_response_list(self, responses : list):
-        '''Updates availability metrics for list of Responses and reports results'''
+    def update_metrics_for_list(self, responses : list):
+        '''Updates availability metrics for list of Responses
+        Arguments:
+            responses: List of responses to update metrics for'''
         for next_resp in responses:
-            self.update_metrics(next_resp)
+            self.update_metrics_for_response(next_resp)
+
+    def report_metrics(self):
+        '''Prints out availability metrics'''
         for domain in self.availability_dict.keys():
             percent_available = self.get_percent_available(domain)
             print(f'{domain} has {percent_available}% availability percentage')
