@@ -22,7 +22,7 @@ class AvailabilityMetrics():
         Returns:
             True if endpoint is up, False otherwise
         '''
-        return 200 <= status_code < 300 and elapsed_ms <= 500
+        return 200 <= status_code < 300 and elapsed_ms < 500
 
     def get_percent_available(self, domain : str) -> float:
         '''Computes the availability percentage for a domain, 0 for not found
@@ -39,7 +39,7 @@ class AvailabilityMetrics():
         Arguments:
             domain: Domain to update availability for
             status_code: Query status code, considered up from 200 to 299
-            elapsed_ms: Query elapsed time, considered up from 0 to 500
+            elapsed_ms: Query elapsed time, considered up from 0 to 499
         '''
         (up, down) = self.get_availability(domain)
         if AvailabilityMetrics.is_endpoint_up(status_code, elapsed_ms):

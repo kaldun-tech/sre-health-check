@@ -11,28 +11,27 @@ class HTTPRequester:
         Returns:
             list: Responses to requests'''
         responses = []
-        for endpoint_name, endpoint_data in endpoints.items():
-            url = endpoint_data['url']
-            method = endpoint_data.get('method', 'GET')  # Default to GET if not specified
-            headers = endpoint_data.get('headers', {})
-            params = endpoint_data.get('params', {})
-            data = endpoint_data.get('data', {})
-            next_resp = HTTPRequester.query_endpoint(url, method, headers, params, data)
+        for next_endpoint in endpoints:
+            url = next_endpoint['url']
+            method = next_endpoint.get('method', 'GET')  # Default to GET if not specified
+            headers = next_endpoint.get('headers', {})
+            json = next_endpoint.get('body', {})
+            next_resp = HTTPRequester.query_endpoint(url, method, headers, json)
             responses.append(next_resp)
 
         return responses
 
     @staticmethod
-    def query_endpoint(url, method='GET', headers=None, params=None, data=None):
+    def query_endpoint(url, method='GET', headers={}, json={}):
         '''Query single endpoint
         Arguments:
             url: URL string to query
             method: HTTP method, default is GET
-            headers: HTTP headers, default None
-            params: HTTP parameters, default None
-            data: HTTP POST data, default None
+            headers: HTTP headers, default empty dict
+            json: Request body, default empty dict
+        
         Returns: Response to request'''
-        return requests.request(method, url, headers=headers, params=params, data=data)
+        return requests.request(method, url, headers=headers, json=json)
 
     @staticmethod
     def get_endpoint_domain(url : str):

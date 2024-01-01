@@ -39,8 +39,8 @@ class TestAvailabilityMetrics(TestCase):
     def test_is_endpoint_up_elapsed(self):
         '''Tests is_endpoint_up by varying elapsed for good status code'''
         self.assertTrue(AvailabilityMetrics.is_endpoint_up(200, 0))
-        self.assertTrue(AvailabilityMetrics.is_endpoint_up(200, 500))
-        self.assertFalse(AvailabilityMetrics.is_endpoint_up(200, 501))
+        self.assertTrue(AvailabilityMetrics.is_endpoint_up(200, 499))
+        self.assertFalse(AvailabilityMetrics.is_endpoint_up(200, 500))
         self.assertFalse(AvailabilityMetrics.is_endpoint_up(200, 1000))
 
     def test_update_availability_for_domain(self):
@@ -54,8 +54,8 @@ class TestAvailabilityMetrics(TestCase):
         '''Tests updating and getting availability for list of responses'''
         responses = [
             MockResponse('fetch.com', 200, 0),
-            MockResponse('fetch.com', 299, 500),
-            MockResponse('fetch.com', 300, 500),
+            MockResponse('fetch.com', 299, 499),
+            MockResponse('fetch.com', 300, 100),
         ]
         self.metrics.update_for_list(responses)
         (up, down) = self.metrics.get_availability('fetch.com')
