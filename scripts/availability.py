@@ -1,4 +1,4 @@
-from http_requests import HTTPRequester
+from scripts.http_requests import HTTPRequester
 from requests import Response
 
 class AvailabilityMetrics():
@@ -18,27 +18,11 @@ class AvailabilityMetrics():
         '''Test if endpoint is up
         Arguments:
             status_code: Query status code, considered up from 200 to 299
-            elapsed_ms: Query elapsed time, considered up from 0 to 500
+            elapsed_ms: Query elapsed time, considered up for less than 500
         Returns:
             True if endpoint is up, False otherwise
         '''
-        return 200 <= status_code < 300 and elapsed_ms < 500
-
-    def update_availability(self, domain : str, status_code : int, elapsed_ms : int):
-        '''Update availability for domain and Response status code
-        Arguments:
-            status_code: Query status code, considered up from 200 to 299
-            elapsed_ms: Query elapsed time, considered up from 0 to 500
-        '''
-        availability = self.get_availability(domain)
-        if AvailabilityMetrics.is_endpoint_up(status_code, elapsed_ms):
-            # Increment up count
-            availability[0] += 1
-        else:
-            # Increment down count
-            availability[1] += 1
-        # Update cache
-        self.availability_dict[domain] = availability
+        return 200 <= status_code < 300 and elapsed_ms <= 500
 
     def get_percent_available(self, domain : str) -> float:
         '''Computes the availability percentage for a domain, 0 for not found
@@ -50,19 +34,36 @@ class AvailabilityMetrics():
         total_count = up_count + down_count
         return (100 * up_count / total_count) if 0 < total_count else 0
 
-    def update_metrics_for_response(self, response : Response):
-        '''Updates metrics for individual Response
+    def update_for_domain(self, domain : str, status_code : int, elapsed_ms : int):
+        '''Update availability for domain, status code, and elapsed millis
+        Arguments:
+            domain: Domain to update availability for
+            status_code: Query status code, considered up from 200 to 299
+            elapsed_ms: Query elapsed time, considered up from 0 to 500
+        '''
+        (up, down) = self.get_availability(domain)
+        if AvailabilityMetrics.is_endpoint_up(status_code, elapsed_ms):
+            # Increment up count
+            up += 1
+        else:
+            # Increment down count
+            down += 1
+        # Update cache
+        self.availability_dict[domain] = (up, down)
+
+    def update_for_response(self, response):
+        '''Updates metrics for individual request response
         Arguments:
             response: Single response to update metrics for'''
         domain = HTTPRequester.get_endpoint_domain(response.url)
-        self.update_availability(domain, response.status_code, response.elapsed)
+        self.update_for_domain(domain, response.status_code, response.elapsed)
 
-    def update_metrics_for_list(self, responses : list):
+    def update_for_list(self, responses : list):
         '''Updates availability metrics for list of Responses
         Arguments:
             responses: List of responses to update metrics for'''
         for next_resp in responses:
-            self.update_metrics_for_response(next_resp)
+            self.update_for_response(next_resp)
 
     def report_metrics(self):
         '''Prints out availability metrics'''
