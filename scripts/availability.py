@@ -25,7 +25,7 @@ class AvailabilityMetrics():
         '''
         return 200 <= status_code < 300 and elapsed < timedelta(milliseconds=500)
 
-    def get_percent_available(self, domain : str) -> float:
+    def get_percent_available(self, domain : str) -> int:
         '''Computes the availability percentage for a domain, 0 for not found
         Arguments:
             domain: Domain to check

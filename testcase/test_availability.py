@@ -65,12 +65,12 @@ class TestAvailabilityMetrics(TestCase):
         (up, down) = self.metrics.get_availability('fetch.com')
         self.assertEquals(up, 2)
         self.assertEquals(down, 1)
-        self.assertEquals(self.metrics.get_percent_available('fetch.com'), 200.0 / 3)
+        self.assertEquals(self.metrics.get_percent_available('fetch.com'), 200 / 3)
     
     def test_get_percent_available(self):
         '''Tests get percent available from initial setup'''
-        self.assertEqual(self.metrics.get_percent_available('alwaysup.com'), 100.0)
-        self.assertEqual(self.metrics.get_percent_available('alwaysdown.com'), 0.0)
-        self.assertEqual(self.metrics.get_percent_available('notpresent.com'), 0.0)
-        self.assertEqual(self.metrics.get_percent_available('sometimesup.com'), 75.0)
+        self.assertEqual(self.metrics.get_percent_available('alwaysup.com'), 100)
+        self.assertEqual(self.metrics.get_percent_available('alwaysdown.com'), 0)
+        self.assertEqual(self.metrics.get_percent_available('notpresent.com'), 0)
+        self.assertEqual(self.metrics.get_percent_available('sometimesup.com'), 75)
         self.metrics.report_metrics()

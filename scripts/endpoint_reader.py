@@ -8,7 +8,7 @@ class EndpointReader:
     DEFAULT_FILE_PATH = os.path.join(CURRENT_DIR, '..', 'data', 'fetch.yml')
 
     @staticmethod
-    def read_endpoints(file_path : str = DEFAULT_FILE_PATH):
+    def read_endpoints(file_path : str = DEFAULT_FILE_PATH) -> dict | None:
         '''Read endpoints from YAML file
         Args:
             file_path (str): Path to the YAML file
