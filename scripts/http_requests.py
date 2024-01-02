@@ -1,10 +1,19 @@
 import requests
+from datetime import timedelta
+
+class EndpointResponse:
+    '''Endpoint response'''
+    def __init__(self, name : str, url : str, status_code : int, elapsed : timedelta):
+        self.name = name
+        self.url = url
+        self.status_code = status_code
+        self.elapsed = elapsed
 
 class HTTPRequester:
     '''Performs HTTP requests'''
 
     @staticmethod
-    def query_endpoints(endpoints : dict):
+    def query_endpoints(endpoints : dict) -> list:
         '''Queries all endpoints in collection
         Arguments:
             endpoints (dict): Dictionary of requests to query
@@ -12,12 +21,13 @@ class HTTPRequester:
             list: Responses to requests'''
         responses = []
         for next_endpoint in endpoints:
+            name = next_endpoint['name']
             url = next_endpoint['url']
             method = next_endpoint.get('method', 'GET')  # Default to GET if not specified
             headers = next_endpoint.get('headers', None)
             json = next_endpoint.get('body', None)
-            next_resp = HTTPRequester.query_endpoint(url, method, headers, json)
-            responses.append(next_resp)
+            response = HTTPRequester.query_endpoint(url, method, headers, json)
+            responses.append(EndpointResponse(name, url, response.status_code, response.elapsed))
 
         return responses
 

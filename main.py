@@ -18,7 +18,6 @@ def main():
         sys.exit(1)
 
     sleeptime = 15
-    paused = False
     metrics = AvailabilityMetrics()
     print(f'Found {len(endpoints)} endpoints')
     print(f'Program will query endpoints and report results every {sleeptime} seconds, press CTRL + C to quit...')

@@ -29,11 +29,11 @@ class AvailabilityMetrics():
         '''Computes the availability percentage for a domain, 0 for not found
         Arguments:
             domain: Domain to check
-        Returns: Availability percentage as float
+        Returns: Availability percentage as int
         '''
         (up_count, down_count) = self.get_availability(domain)
         total_count = up_count + down_count
-        return (100 * up_count / total_count) if 0 < total_count else 0
+        return round(100 * up_count / total_count) if 0 < total_count else 0
 
     def update_for_domain(self, domain : str, status_code : int, elapsed : timedelta):
         '''Update availability for domain, status code, and elapsed millis
