@@ -8,8 +8,6 @@ pip install requests
 #### Run main script
 python main.py
 Exit with CTRL + C
-All of the endpoints are reported as fetch.com ecause fetchrewards.com redirects
-Considering whether this should be corrected for
 
 #### Run test cases
 python -m unittest testcase.test_availability
