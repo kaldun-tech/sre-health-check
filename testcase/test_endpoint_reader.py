@@ -1,23 +1,45 @@
 from scripts.endpoint_reader import EndpointReader
 from unittest import TestCase
-import os
+from unittest import mock
+from unittest.mock import mock_open
+import yaml
 
-CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
-EMPTY_FILE_PATH = os.path.join(CURRENT_DIR, '..', 'data', 'empty.yml')
-NONEXISTENT_FILE_PATH = 'fakenews'
+YML_TEXT = '''
+- headers:
+    user-agent: fetch-synthetic-monitor
+  method: GET
+  name: fetch index page
+  url: https://fetch.com/
+'''
+YML_DATA = [{
+    'headers' : {'user-agent': 'fetch-synthetic-monitor'},
+    'method' : 'GET',
+    'name' : 'fetch index page',
+    'url' : 'https://fetch.com/',
+}]
+MOCK_FILE_NOT_FOUND = mock.Mock(side_effect=FileNotFoundError())
+MOCK_YAML_ERROR= mock.Mock(side_effect=yaml.YAMLError())
 
 class TestEndpointReader(TestCase):
-    '''Tests for EndpointReader, TODO use mocks instead of datafiles'''
-    def test_nonexistent_filepath(self):
-        with self.assertRaises(FileNotFoundError) as context:
-            EndpointReader.read_endpoints(NONEXISTENT_FILE_PATH)
-        self.assertTrue(str(context.exception).startswith('File not found'))
+    '''Tests for EndpointReader'''
 
-    def test_empty_file(self):
-        endpoints = EndpointReader.read_endpoints(EMPTY_FILE_PATH)
+    @mock.patch('builtins.open', mock_open(mock=MOCK_FILE_NOT_FOUND))
+    def test_read_endpoints_notfound(self):
+        endpoints = EndpointReader.read_endpoints('nonexistentfile.yml')
         self.assertIsNone(endpoints)
 
-    def test_normal_file(self):
-        endpoints = EndpointReader.read_endpoints()
+    @mock.patch('builtins.open', mock_open(mock=MOCK_YAML_ERROR))
+    def test_read_endpoints_yamlerror(self):
+        endpoints = EndpointReader.read_endpoints('billy.xml')
+        self.assertIsNone(endpoints)
+
+    @mock.patch('builtins.open', mock_open())
+    def test_read_endpoints_empty(self):
+        endpoints = EndpointReader.read_endpoints('emptyfile.yml')
+        self.assertIsNone(endpoints)
+
+    @mock.patch('builtins.open', mock_open(read_data=YML_TEXT))
+    def test_read_endpoints_normal(self):
+        endpoints = EndpointReader.read_endpoints('normalfile.yml')
         self.assertIsNotNone(endpoints)
-        print(type(endpoints))
+        self.assertEquals(endpoints, YML_DATA)

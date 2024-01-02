@@ -13,14 +13,15 @@ class EndpointReader:
         Args:
             file_path (str): Path to the YAML file
         Returns:
-            dict: The parsed YAML file as dictionary
+            dict: The parsed YAML file as dictionary, None on failure
         Raises:
-            FileNotFoundError: If the file does not exist
-            yaml.YAMLError: If there is an error parsing the YAML'''
+            FileNotFoundError: File was not found
+            yaml.YAMLError: Failed to parse errors
+        '''
         try:
             with open(file_path, 'r') as file:
                 return yaml.safe_load(file)
         except FileNotFoundError:
-            raise FileNotFoundError('File not found: ' + file_path)
+            raise('File not found: ' + file_path)
         except yaml.YAMLError as e:
-            raise yaml.YAMLError('Error parsing YAML: ' + str(e))
+            raise('Error parsing YAML: ' + str(e))
