@@ -14,21 +14,21 @@ class HTTPRequester:
         for next_endpoint in endpoints:
             url = next_endpoint['url']
             method = next_endpoint.get('method', 'GET')  # Default to GET if not specified
-            headers = next_endpoint.get('headers', {})
-            json = next_endpoint.get('body', {})
+            headers = next_endpoint.get('headers', None)
+            json = next_endpoint.get('body', None)
             next_resp = HTTPRequester.query_endpoint(url, method, headers, json)
             responses.append(next_resp)
 
         return responses
 
     @staticmethod
-    def query_endpoint(url, method='GET', headers={}, json={}):
+    def query_endpoint(url, method='GET', headers=None, json=None):
         '''Query single endpoint
         Arguments:
             url: URL string to query
             method: HTTP method, default is GET
-            headers: HTTP headers, default empty dict
-            json: Request body, default empty dict
+            headers: HTTP headers, default None
+            json: Request body, default None
         
         Returns: Response to request'''
         return requests.request(method, url, headers=headers, json=json)

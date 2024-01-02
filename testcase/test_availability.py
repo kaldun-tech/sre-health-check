@@ -1,5 +1,10 @@
 from scripts.availability import AvailabilityMetrics
 from unittest import TestCase
+from datetime import timedelta
+
+ELAPSED_ZERO = timedelta(0)
+ELAPSED_MAX = timedelta(milliseconds=499)
+ELAPSED_HIGH = timedelta(milliseconds=500)
 
 class MockResponse():
     '''Mock response object for testing'''
@@ -30,22 +35,21 @@ class TestAvailabilityMetrics(TestCase):
 
     def test_is_endpoint_up_statuscode(self):
         '''Tests is_endpoint_up for various status codes'''
-        self.assertFalse(AvailabilityMetrics.is_endpoint_up(199, 0))
-        self.assertTrue(AvailabilityMetrics.is_endpoint_up(200, 0))
-        self.assertTrue(AvailabilityMetrics.is_endpoint_up(299, 0))
-        self.assertFalse(AvailabilityMetrics.is_endpoint_up(300, 0))
-        self.assertFalse(AvailabilityMetrics.is_endpoint_up(404, 0))
+        self.assertFalse(AvailabilityMetrics.is_endpoint_up(199, ELAPSED_ZERO))
+        self.assertTrue(AvailabilityMetrics.is_endpoint_up(200, ELAPSED_ZERO))
+        self.assertTrue(AvailabilityMetrics.is_endpoint_up(299, ELAPSED_ZERO))
+        self.assertFalse(AvailabilityMetrics.is_endpoint_up(300, ELAPSED_ZERO))
+        self.assertFalse(AvailabilityMetrics.is_endpoint_up(404, ELAPSED_ZERO))
 
     def test_is_endpoint_up_elapsed(self):
         '''Tests is_endpoint_up by varying elapsed for good status code'''
-        self.assertTrue(AvailabilityMetrics.is_endpoint_up(200, 0))
-        self.assertTrue(AvailabilityMetrics.is_endpoint_up(200, 499))
-        self.assertFalse(AvailabilityMetrics.is_endpoint_up(200, 500))
-        self.assertFalse(AvailabilityMetrics.is_endpoint_up(200, 1000))
+        self.assertTrue(AvailabilityMetrics.is_endpoint_up(200, ELAPSED_ZERO))
+        self.assertTrue(AvailabilityMetrics.is_endpoint_up(200, ELAPSED_MAX))
+        self.assertFalse(AvailabilityMetrics.is_endpoint_up(200, ELAPSED_HIGH))
 
     def test_update_availability_for_domain(self):
         '''Tests updating and getting availability for single response'''
-        self.metrics.update_for_response(MockResponse('fetch.com', 200, 0))
+        self.metrics.update_for_response(MockResponse('fetch.com', 200, ELAPSED_ZERO))
         (up, down) = self.metrics.get_availability('fetch.com')
         self.assertEquals(up, 1)
         self.assertEquals(down, 0)
@@ -53,9 +57,9 @@ class TestAvailabilityMetrics(TestCase):
     def test_update_availability_for_list(self):
         '''Tests updating and getting availability for list of responses'''
         responses = [
-            MockResponse('fetch.com', 200, 0),
-            MockResponse('fetch.com', 299, 499),
-            MockResponse('fetch.com', 300, 100),
+            MockResponse('fetch.com', 200, ELAPSED_ZERO),
+            MockResponse('fetch.com', 299, ELAPSED_MAX),
+            MockResponse('fetch.com', 300, ELAPSED_ZERO),
         ]
         self.metrics.update_for_list(responses)
         (up, down) = self.metrics.get_availability('fetch.com')

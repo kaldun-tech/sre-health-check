@@ -1,5 +1,6 @@
 from scripts.http_requests import HTTPRequester
 from requests import Response
+from datetime import timedelta
 
 class AvailabilityMetrics():
     '''Computes and reports availability metrics for endpoint domains'''
@@ -14,15 +15,15 @@ class AvailabilityMetrics():
         return self.availability_dict[domain] if domain in self.availability_dict.keys() else (0, 0)
 
     @staticmethod
-    def is_endpoint_up(status_code : int, elapsed_ms : int) -> bool:
+    def is_endpoint_up(status_code : int, elapsed : timedelta) -> bool:
         '''Test if endpoint is up
         Arguments:
             status_code: Query status code, considered up from 200 to 299
-            elapsed_ms: Query elapsed time, considered up for less than 500
+            elapsed_ms: Query elapsed timedelta, considered up for less than 500 ms
         Returns:
             True if endpoint is up, False otherwise
         '''
-        return 200 <= status_code < 300 and elapsed_ms < 500
+        return 200 <= status_code < 300 and elapsed < timedelta(milliseconds=500)
 
     def get_percent_available(self, domain : str) -> float:
         '''Computes the availability percentage for a domain, 0 for not found
@@ -34,15 +35,15 @@ class AvailabilityMetrics():
         total_count = up_count + down_count
         return (100 * up_count / total_count) if 0 < total_count else 0
 
-    def update_for_domain(self, domain : str, status_code : int, elapsed_ms : int):
+    def update_for_domain(self, domain : str, status_code : int, elapsed : timedelta):
         '''Update availability for domain, status code, and elapsed millis
         Arguments:
             domain: Domain to update availability for
             status_code: Query status code, considered up from 200 to 299
-            elapsed_ms: Query elapsed time, considered up from 0 to 499
+            elapsed: Query elapsed timedelta, considered up for less than 500 ms
         '''
         (up, down) = self.get_availability(domain)
-        if AvailabilityMetrics.is_endpoint_up(status_code, elapsed_ms):
+        if AvailabilityMetrics.is_endpoint_up(status_code, elapsed):
             # Increment up count
             up += 1
         else:
