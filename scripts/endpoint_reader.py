@@ -2,7 +2,7 @@ import yaml
 import os
 
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
-DEFAULT_FILE_PATH = os.path.join(CURRENT_DIR, '..', 'data', 'fetch.yml')
+DEFAULT_FILE_PATH = os.path.join(CURRENT_DIR, '..', 'data', 'endpoints.yml')
 
 class EndpointReader:
     '''Reads REST endpoints from YAML file'''
@@ -18,6 +18,8 @@ class EndpointReader:
             FileNotFoundError: File was not found
             yaml.YAMLError: Failed to parse errors
         '''
+        if file_path is None:
+            file_path = DEFAULT_FILE_PATH
         try:
             with open(file_path, 'r') as file:
                 return yaml.safe_load(file)

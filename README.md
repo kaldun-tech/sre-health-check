@@ -6,6 +6,8 @@ pip install pyyaml
 
 pip install requests
 
+pip install argparse
+
 #### Run main script
 python main.py
 
