@@ -1,5 +1,13 @@
 # sre-health-check
-SRE Health Check Exercise: 
+Script reads REST endpoints from YAML file, queries them repeatedly, computes and reports the percent uptime for domain.
+
+An endpoint is considered UP if response is 200-299 and latency is less than 500 milliseconds.
+
+TODO items:
+- Remove fetch branding
+- Cleanup pylint warnings/errors
+- Confirm code passes provided body to endpoints via post request
+- Confirm code accurately determines uptime of endpoints
 
 #### Install dependencies
 pip install -r requirements.txt
