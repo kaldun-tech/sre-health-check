@@ -20,4 +20,5 @@ jobs:
         pip install pylint
     - name: Analysing the code with pylint
       run: |
-        pylint --errors-only $(git ls-files '*.py')
+        # Allows CI to pass for cosmetic warnings
+        pylint --fail-under 9 $(git ls-files '*.py')
