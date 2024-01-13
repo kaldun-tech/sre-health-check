@@ -1,7 +1,6 @@
-from scripts.availability import AvailabilityMetrics
 from unittest import TestCase
+from scripts.availability import AvailabilityMetrics
 from testcase.mock_response import MockResponse
-from datetime import timedelta
 
 class TestAvailabilityMetrics(TestCase):
     '''Tests for AvailabilityMetrics'''
@@ -31,8 +30,8 @@ class TestAvailabilityMetrics(TestCase):
         '''Tests updating and getting availability for single response'''
         self.metrics.update_for_response(MockResponse('fetch', 'fetch.com', 200, MockResponse.ELAPSED_ZERO))
         (up, down) = self.metrics.get_availability('fetch.com')
-        self.assertEquals(up, 1)
-        self.assertEquals(down, 0)
+        self.assertEqual(up, 1)
+        self.assertEqual(down, 0)
 
     def test_update_availability_for_list(self):
         '''Tests updating and getting availability for list of responses'''
@@ -43,10 +42,10 @@ class TestAvailabilityMetrics(TestCase):
         ]
         self.metrics.update_for_list(responses)
         (up, down) = self.metrics.get_availability('fetch.com')
-        self.assertEquals(up, 2)
-        self.assertEquals(down, 1)
-        self.assertEquals(self.metrics.get_percent_available('fetch.com'), round(200.0 / 3))
-    
+        self.assertEqual(up, 2)
+        self.assertEqual(down, 1)
+        self.assertEqual(self.metrics.get_percent_available('fetch.com'), round(200.0 / 3))
+
     def test_get_percent_available(self):
         '''Tests get percent available from initial setup'''
         self.assertEqual(self.metrics.get_percent_available('up.com'), 100)

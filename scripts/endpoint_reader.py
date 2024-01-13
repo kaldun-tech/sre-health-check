@@ -1,5 +1,5 @@
-import yaml
 import os
+import yaml
 
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 DEFAULT_FILE_PATH = os.path.join(CURRENT_DIR, '..', 'data', 'endpoints.yml')
@@ -20,10 +20,5 @@ class EndpointReader:
         '''
         if file_path is None:
             file_path = DEFAULT_FILE_PATH
-        try:
-            with open(file_path, 'r') as file:
-                return yaml.safe_load(file)
-        except FileNotFoundError:
-            raise('File not found: ' + file_path)
-        except yaml.YAMLError as e:
-            raise('Error parsing YAML: ' + str(e))
+        with open(file_path, 'r', encoding='utf8') as file:
+            return yaml.safe_load(file)

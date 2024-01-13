@@ -1,6 +1,5 @@
-from scripts.http_requests import HTTPRequester
-from requests import Response
 from datetime import timedelta
+from scripts.http_requests import HTTPRequester
 
 class AvailabilityMetrics():
     '''Computes and reports availability metrics for endpoint domains'''
@@ -12,7 +11,7 @@ class AvailabilityMetrics():
 
     def get_availability(self, domain: str) -> dict:
         '''Get availability for domain as Tuple (up_count, down_count)'''
-        return self.availability_dict[domain] if domain in self.availability_dict.keys() else (0, 0)
+        return self.availability_dict[domain] if domain in self.availability_dict else (0, 0)
 
     @staticmethod
     def is_endpoint_up(status_code : int, elapsed : timedelta) -> bool:
@@ -68,7 +67,7 @@ class AvailabilityMetrics():
 
     def report_metrics(self):
         '''Prints out availability metrics'''
-        for domain in self.availability_dict.keys():
+        for domain in self.availability_dict:
             percent_available = self.get_percent_available(domain)
             print(f'{domain} has {percent_available}% availability percentage')
             

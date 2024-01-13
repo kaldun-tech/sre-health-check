@@ -1,5 +1,5 @@
-import requests
 from datetime import timedelta
+import requests
 
 class EndpointResponse:
     '''Endpoint response'''
@@ -20,7 +20,12 @@ class HTTPRequester:
         Returns:
             list: Responses to requests'''
         responses = []
+        if endpoints is None:
+            return responses
+
         for next_endpoint in endpoints:
+            if next_endpoint is None:
+                continue
             name = next_endpoint['name']
             url = next_endpoint['url']
             method = next_endpoint.get('method', 'GET')  # Default to GET if not specified
@@ -32,19 +37,27 @@ class HTTPRequester:
         return responses
 
     @staticmethod
-    def query_endpoint(url, method='GET', headers=None, json=None):
+    def query_endpoint(url, method='GET', headers={}, json={}, timeout=5) -> requests.Response | None:
         '''Query single endpoint
         Arguments:
             url: URL string to query
             method: HTTP method, default is GET
-            headers: HTTP headers, default None
-            json: Request body, default None
+            headers: HTTP headers, default empty
+            json: Request body, default empty
         
-        Returns: Response to request'''
-        return requests.request(method, url, headers=headers, json=json)
+        Returns: Response to request, None on failure'''
+
+        if url is None:
+            return None
+
+        try:
+            return requests.request(method, url, headers=headers, json=json, timeout=timeout)
+        except requests.exceptions.MissingSchema:
+            print('Invalid URL: ' + url)
+            return None
 
     @staticmethod
-    def get_endpoint_domain(url : str):
+    def get_endpoint_domain(url : str) -> str:
         '''Get domain for an endpoint URL
         Arguments:
             url: URL string
@@ -52,16 +65,15 @@ class HTTPRequester:
         if url is None:
             return ''
 
-        # Advanced past http:// or https://
-        prefixes = ['http://', 'https://']
+        # Advanced past nondomain prefixes
+        prefixes = ['http://', 'https://', 'www.']
         for prefix in prefixes:
             if url.startswith(prefix):
                 url = url[len(prefix):]
-                break
 
         # Truncate at separator /
-        endIndex = url.find('/')
-        if -1 < endIndex:
-            return url[:endIndex]
+        end_index = url.find('/')
+        if -1 < end_index:
+            return url[:end_index]
 
         return url

@@ -1,8 +1,8 @@
 from unittest import TestCase
+from unittest.mock import patch
 from scripts.http_requests import EndpointResponse
 from scripts.http_requests import HTTPRequester
 from testcase.mock_response import MockResponse
-from unittest.mock import patch
 
 MOCK_ENDPOINTS = [
     {'name': 'up', 'url': 'up.com', 'method' : 'GET'},
@@ -21,20 +21,30 @@ class MockRequest():
         self.url = url
         self.method = method
 
+    @staticmethod
     def request(method, url, **kwargs):
         '''Mock request method'''
-        if url in MOCK_RESPONSES.keys():
-            return MOCK_RESPONSES[url]
-        else:
-            return MockResponse(url, url, 404, MockResponse.ELAPSED_MAX)
+        return MOCK_RESPONSES[url] if url in MOCK_RESPONSES else MockResponse(url, url, 404, MockResponse.ELAPSED_MAX)
 
 
 class TestHTTPRequester(TestCase):
     '''Tests for HTTPRequester'''
 
+    def test_query_endpoints_none(self):
+        '''Test query of None endpoints dictionary'''
+        responses = HTTPRequester.query_endpoints(None)
+        self.assertIsNotNone(responses)
+        self.assertEqual(responses, [])
+
     def test_query_endpoints_empty(self):
         '''Test query of empty endpoints dictionary'''
         responses = HTTPRequester.query_endpoints({})
+        self.assertIsNotNone(responses)
+        self.assertEqual(responses, [])
+
+    def test_query_endpoints_invalid(self):
+        '''Test query of invalid endpoints dictionary'''
+        responses = HTTPRequester.query_endpoints({None})
         self.assertIsNotNone(responses)
         self.assertEqual(responses, [])
 
@@ -48,11 +58,31 @@ class TestHTTPRequester(TestCase):
             self.assertIsNotNone(response)
             mock_res = MOCK_RESPONSES[response.url]
             self.assertIsNotNone(mock_res)
-            self.assertEquals(mock_res.name, response.name)
-            self.assertEquals(mock_res.status_code, response.status_code)
-            self.assertEquals(mock_res.elapsed, response.elapsed)
+            self.assertEqual(mock_res.name, response.name)
+            self.assertEqual(mock_res.status_code, response.status_code)
+            self.assertEqual(mock_res.elapsed, response.elapsed)
 
-    # Skipping test_query_endpoint as this just passes through to requests
+    def test_query_endpoint_none(self):
+        '''Tests for query endpoint with None input'''
+        response = HTTPRequester.query_endpoint(None)
+        self.assertIsNone(response)
+
+    def test_query_endpoint_malformed(self):
+        '''Tests for query malformed endpoint'''
+        response = HTTPRequester.query_endpoint('fake.news')
+        self.assertIsNone(response)
+
+    def test_query_endpoint_nonexistent(self):
+        '''Tests for query bad request'''
+        response = HTTPRequester.query_endpoint('https://google.com/fakenews')
+        self.assertIsNotNone(response)
+        self.assertEqual(response.status_code, 400)
+
+    def test_query_endpoint_normal(self):
+        '''Tests for query normal endpoint'''
+        response = HTTPRequester.query_endpoint('https://jsonplaceholder.typicode.com/todos/1')
+        self.assertIsNotNone(response)
+        self.assertEqual(response.status_code, 200)
 
     def test_get_endpoint_domain_degen(self):
         '''Tests for get endpoint domain None/empty'''
@@ -64,18 +94,16 @@ class TestHTTPRequester(TestCase):
 
     def test_get_endpoint_domain_normal(self):
         '''Tests for get endpoint domain non-empty'''
-        exp_domain = 'www.fetch.com'
-        act_domain = HTTPRequester.get_endpoint_domain('www.fetch.com')
+        exp_domain = 'jsonplaceholder.typicode.com'
+        act_domain = HTTPRequester.get_endpoint_domain('jsonplaceholder.typicode.com')
         self.assertEqual(exp_domain, act_domain)
-        act_domain = HTTPRequester.get_endpoint_domain('www.fetch.com/careers')
+        act_domain = HTTPRequester.get_endpoint_domain('jsonplaceholder.typicode.com/posts')
         self.assertEqual(exp_domain, act_domain)
-        act_domain = HTTPRequester.get_endpoint_domain('http://www.fetch.com')
+        act_domain = HTTPRequester.get_endpoint_domain('www.jsonplaceholder.typicode.com')
         self.assertEqual(exp_domain, act_domain)
-        act_domain = HTTPRequester.get_endpoint_domain('http://www.fetch.com/some/url')
+        act_domain = HTTPRequester.get_endpoint_domain('http://jsonplaceholder.typicode.com')
         self.assertEqual(exp_domain, act_domain)
-        act_domain = HTTPRequester.get_endpoint_domain('https://www.fetch.com/')
+        act_domain = HTTPRequester.get_endpoint_domain('https://jsonplaceholder.typicode.com')
         self.assertEqual(exp_domain, act_domain)
-        act_domain = HTTPRequester.get_endpoint_domain('https://www.fetch.com/careers')
-        self.assertEqual(exp_domain, act_domain)
-        act_domain = HTTPRequester.get_endpoint_domain('https://www.fetch.com/some/post/url')
+        act_domain = HTTPRequester.get_endpoint_domain('https://www.jsonplaceholder.typicode.com/posts')
         self.assertEqual(exp_domain, act_domain)

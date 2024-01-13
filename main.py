@@ -1,9 +1,9 @@
-from scripts.endpoint_reader import EndpointReader
-from scripts.http_requests import HTTPRequester
-from scripts.availability import AvailabilityMetrics
 from argparse import ArgumentParser
 import sys
 import time
+from scripts.endpoint_reader import EndpointReader
+from scripts.http_requests import HTTPRequester
+from scripts.availability import AvailabilityMetrics
 
 def do_query_report(metrics : AvailabilityMetrics, endpoints : dict):
     '''Query and report on endpoints'''
