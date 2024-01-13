@@ -1,0 +1,7 @@
+[MESSAGES CONTROL]
+
+[FORMAT]
+max-lne-length=140
+
+[TYPECHECK]
+min-public-methods=1

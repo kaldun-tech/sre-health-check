@@ -22,6 +22,7 @@ class MockRequest():
         self.method = method
 
     @staticmethod
+    # pylint: disable=unused-argument
     def request(method, url, **kwargs):
         '''Mock request method'''
         return MOCK_RESPONSES[url] if url in MOCK_RESPONSES else MockResponse(url, url, 404, MockResponse.ELAPSED_MAX)

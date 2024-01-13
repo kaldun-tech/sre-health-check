@@ -37,7 +37,7 @@ class HTTPRequester:
         return responses
 
     @staticmethod
-    def query_endpoint(url, method='GET', headers={}, json={}, timeout=5) -> requests.Response | None:
+    def query_endpoint(url, method='GET', headers=None, json=None, timeout=5) -> requests.Response | None:
         '''Query single endpoint
         Arguments:
             url: URL string to query
