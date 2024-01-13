@@ -1,12 +1,8 @@
-# fetch-sre-health-check
-SRE Health Check Exercise for Fetch
+# sre-health-check
+SRE Health Check Exercise: 
 
 #### Install dependencies
-pip install pyyaml
-
-pip install requests
-
-pip install argparse
+pip install -r requirements.txt
 
 #### Run main script
 python main.py

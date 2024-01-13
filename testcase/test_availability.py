@@ -28,23 +28,23 @@ class TestAvailabilityMetrics(TestCase):
 
     def test_update_availability_for_domain(self):
         '''Tests updating and getting availability for single response'''
-        self.metrics.update_for_response(MockResponse('fetch', 'fetch.com', 200, MockResponse.ELAPSED_ZERO))
-        (up, down) = self.metrics.get_availability('fetch.com')
+        self.metrics.update_for_response(MockResponse('jsonplaceholder', 'jsonplaceholder.typicode.com', 200, MockResponse.ELAPSED_ZERO))
+        (up, down) = self.metrics.get_availability('jsonplaceholder.typicode.com')
         self.assertEqual(up, 1)
         self.assertEqual(down, 0)
 
     def test_update_availability_for_list(self):
         '''Tests updating and getting availability for list of responses'''
         responses = [
-            MockResponse('fast', 'fetch.com', 200, MockResponse.ELAPSED_ZERO),
-            MockResponse('slow', 'fetch.com', 299, MockResponse.ELAPSED_MAX),
-            MockResponse('down', 'fetch.com', 300, MockResponse.ELAPSED_ZERO),
+            MockResponse('fast', 'jsonplaceholder.typicode.com', 200, MockResponse.ELAPSED_ZERO),
+            MockResponse('slow', 'jsonplaceholder.typicode.com', 299, MockResponse.ELAPSED_MAX),
+            MockResponse('down', 'jsonplaceholder.typicode.com', 300, MockResponse.ELAPSED_ZERO),
         ]
         self.metrics.update_for_list(responses)
-        (up, down) = self.metrics.get_availability('fetch.com')
+        (up, down) = self.metrics.get_availability('jsonplaceholder.typicode.com')
         self.assertEqual(up, 2)
         self.assertEqual(down, 1)
-        self.assertEqual(self.metrics.get_percent_available('fetch.com'), round(200.0 / 3))
+        self.assertEqual(self.metrics.get_percent_available('jsonplaceholder.typicode.com'), round(200.0 / 3))
 
     def test_get_percent_available(self):
         '''Tests get percent available from initial setup'''
