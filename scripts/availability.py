@@ -1,3 +1,4 @@
+'''Availability metrics for endpoint domains'''
 from datetime import timedelta
 from scripts.http_requests import HTTPRequester
 

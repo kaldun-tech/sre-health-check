@@ -1,7 +1,8 @@
+'''SRE health check main functionality'''
 from argparse import ArgumentParser
 import sys
 import time
-from scripts.endpoint_reader import EndpointReader
+from scripts.endpoint_reader import read_endpoints
 from scripts.http_requests import HTTPRequester
 from scripts.availability import AvailabilityMetrics
 
@@ -17,7 +18,7 @@ def main():
     parser.add_argument('-f', '--filename', type=str, help='YAML file containing endpoint definitions', required=False)
     args = parser.parse_args()
 
-    endpoints = EndpointReader.read_endpoints(args.filename)
+    endpoints = read_endpoints(args.filename)
     if endpoints is None:
         print('ERROR: Failed to read endpoints')
         sys.exit(1)

@@ -1,8 +1,9 @@
+'''Tests for HTTP request'''
 from unittest import TestCase
 from unittest.mock import patch
 from scripts.http_requests import EndpointResponse
 from scripts.http_requests import HTTPRequester
-from testcase.mock_response import MockResponse
+
 
 MOCK_ENDPOINTS = [
     {'name': 'up', 'url': 'up.com', 'method' : 'GET'},
@@ -10,9 +11,9 @@ MOCK_ENDPOINTS = [
     {'name': 'down', 'url': 'down.com', 'method' : 'GET'},
 ]
 MOCK_RESPONSES = {
-    'up.com' : EndpointResponse('up', 'up.com', 200, MockResponse.ELAPSED_MAX),
-    'slow.com' : EndpointResponse('slow', 'slow.com', 200, MockResponse.ELAPSED_HIGH),
-    'down.com' : EndpointResponse('down', 'down.com', 500, MockResponse.ELAPSED_MAX),
+    'up.com' : EndpointResponse('up', 'up.com', 200, EndpointResponse.ELAPSED_MAX),
+    'slow.com' : EndpointResponse('slow', 'slow.com', 200, EndpointResponse.ELAPSED_HIGH),
+    'down.com' : EndpointResponse('down', 'down.com', 500, EndpointResponse.ELAPSED_MAX),
 }
 
 class MockRequest():
@@ -25,7 +26,7 @@ class MockRequest():
     # pylint: disable=unused-argument
     def request(method, url, **kwargs):
         '''Mock request method'''
-        return MOCK_RESPONSES[url] if url in MOCK_RESPONSES else MockResponse(url, url, 404, MockResponse.ELAPSED_MAX)
+        return MOCK_RESPONSES[url] if url in MOCK_RESPONSES else EndpointResponse(url, url, 404, EndpointResponse.ELAPSED_MAX)
 
 
 class TestHTTPRequester(TestCase):
@@ -77,7 +78,7 @@ class TestHTTPRequester(TestCase):
         '''Tests for query bad request'''
         response = HTTPRequester.query_endpoint('https://google.com/fakenews')
         self.assertIsNotNone(response)
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 404)
 
     def test_query_endpoint_normal(self):
         '''Tests for query normal endpoint'''

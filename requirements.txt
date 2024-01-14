@@ -3,3 +3,4 @@ requests
 argparse
 pylint
 typing
+dataclasses

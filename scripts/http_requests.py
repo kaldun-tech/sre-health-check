@@ -1,8 +1,15 @@
+'''Functionality for HTTP requests and endpoint responses'''
 from datetime import timedelta
+from dataclasses import dataclass
 import requests
 
+@dataclass
 class EndpointResponse:
     '''Endpoint response'''
+    ELAPSED_ZERO = timedelta(0)
+    ELAPSED_MAX = timedelta(milliseconds=499)
+    ELAPSED_HIGH = timedelta(milliseconds=500)
+
     def __init__(self, name : str, url : str, status_code : int, elapsed : timedelta):
         self.name = name
         self.url = url
