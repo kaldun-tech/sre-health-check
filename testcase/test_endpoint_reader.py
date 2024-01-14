@@ -21,7 +21,7 @@ YML_DATA = [{
 MOCK_FILE_NOT_FOUND = mock.Mock(side_effect=FileNotFoundError())
 MOCK_YAML_ERROR= mock.Mock(side_effect=yaml.YAMLError())
 
-class Test_endpoint_reader(TestCase):
+class TestEndpointReader(TestCase):
     '''Tests for endpoint_reader'''
 
     @mock.patch('builtins.open', mock_open(mock=MOCK_FILE_NOT_FOUND))

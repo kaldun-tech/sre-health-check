@@ -16,6 +16,7 @@ MOCK_RESPONSES = {
     'down.com' : EndpointResponse('down', 'down.com', 500, EndpointResponse.ELAPSED_MAX),
 }
 
+# pylint: disable=too-few-public-methods
 class MockRequest():
     '''Mock request object for testing'''
     def __init__(self, url, method):

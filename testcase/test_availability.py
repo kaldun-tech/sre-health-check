@@ -29,7 +29,9 @@ class TestAvailabilityMetrics(TestCase):
 
     def test_update_availability_for_domain(self):
         '''Tests updating and getting availability for single response'''
-        self.metrics.update_for_response(EndpointResponse('jsonplaceholder', 'jsonplaceholder.typicode.com', 200, EndpointResponse.ELAPSED_ZERO))
+        self.metrics.update_for_response(
+            EndpointResponse('jsonplaceholder', 'jsonplaceholder.typicode.com', 200, EndpointResponse.ELAPSED_ZERO)
+        )
         (up, down) = self.metrics.get_availability('jsonplaceholder.typicode.com')
         self.assertEqual(up, 1)
         self.assertEqual(down, 0)
