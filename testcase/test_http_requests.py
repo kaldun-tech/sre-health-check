@@ -31,7 +31,7 @@ class MockRequest():
 
 
 class TestHTTPRequester(TestCase):
-    '''Tests for HTTPRequester'''
+    '''Tests for HTTPRequester, consider separating out integration tests'''
 
     def test_query_endpoints_none(self):
         '''Test query of None endpoints dictionary'''
@@ -52,8 +52,8 @@ class TestHTTPRequester(TestCase):
         self.assertEqual(responses, [])
 
     @patch('requests.request', MockRequest.request)
-    def test_query_endpoints_normal(self):
-        '''Testing non-empty query endpoints would require a mock'''
+    def test_query_endpoints_get(self):
+        '''Test querying valid endpoints with GET'''
         responses = HTTPRequester.query_endpoints(MOCK_ENDPOINTS)
         self.assertIsNotNone(responses)
         self.assertEqual(len(responses), len(MOCK_ENDPOINTS))
@@ -81,11 +81,29 @@ class TestHTTPRequester(TestCase):
         self.assertIsNotNone(response)
         self.assertEqual(response.status_code, 404)
 
-    def test_query_endpoint_normal(self):
-        '''Tests for query normal endpoint'''
+    def test_query_endpoint_normal_get(self):
+        '''Tests for query normal endpoint with GET'''
         response = HTTPRequester.query_endpoint('https://jsonplaceholder.typicode.com/todos/1')
         self.assertIsNotNone(response)
         self.assertEqual(response.status_code, 200)
+
+    def test_query_endpoint_post_invalid(self):
+        '''Tests querying an endpoint with POST that does not accept such requests'''
+        response = HTTPRequester.query_endpoint('https://jsonplaceholder.typicode.com/todos/1', 'POST')
+        self.assertIsNotNone(response)
+        self.assertEqual(response.status_code, 404)
+
+    def test_query_endpoint_post(self):
+        '''Tests querying a valid endpoint with a post request'''
+        headers = {'Content-Type': 'application/json; charset=UTF-8'}
+        json = {'userId': 1, 'title': 'test', 'completed': False}
+        response = HTTPRequester.query_endpoint('https://jsonplaceholder.typicode.com/posts', 'POST', headers, json)
+        self.assertIsNotNone(response)
+        self.assertEqual(response.status_code, 201)
+        self.assertIsNotNone(response.json())
+        self.assertEqual(response.json()['userId'], 1)
+        self.assertEqual(response.json()['title'], 'test')
+        self.assertEqual(response.json()['completed'], False)
 
     def test_get_endpoint_domain_degen(self):
         '''Tests for get endpoint domain None/empty'''

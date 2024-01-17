@@ -4,7 +4,6 @@ Script reads REST endpoints from YAML file, queries them repeatedly, computes an
 An endpoint is considered UP if response is 200-299 and latency is less than 500 milliseconds.
 
 TODO items:
-- Confirm code passes provided body to endpoints via post request
 - Confirm code accurately determines uptime of endpoints
 
 #### Install dependencies
