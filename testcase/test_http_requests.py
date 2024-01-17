@@ -104,6 +104,7 @@ class TestHTTPRequester(TestCase):
         self.assertEqual(response.json()['userId'], 1)
         self.assertEqual(response.json()['title'], 'test')
         self.assertEqual(response.json()['completed'], False)
+        self.assertGreater(response.json()['id'], 0)
 
     def test_get_endpoint_domain_degen(self):
         '''Tests for get endpoint domain None/empty'''
