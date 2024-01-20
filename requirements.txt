@@ -4,3 +4,4 @@ argparse
 pylint
 typing
 dataclasses
+pynput
