@@ -3,9 +3,6 @@ Script reads REST endpoints from YAML file, queries them repeatedly, computes an
 
 An endpoint is considered UP if response is 200-299 and latency is less than 500 milliseconds.
 
-TODO items:
-- Confirm code accurately determines uptime of endpoints
-
 #### Install dependencies
 pip install -r requirements.txt
 
@@ -24,3 +21,7 @@ python -m unittest testcase.test_http_requests
 #### Run pylint
 
 pylint --fail-under 9 **/*.py
+
+#### TODO list:
+
+Confirm code accurately determines uptime of endpoints
