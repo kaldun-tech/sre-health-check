@@ -1,8 +1,8 @@
 '''SRE health check main functionality'''
 from argparse import ArgumentParser
-from pynput import keyboard
 import sys
 import time
+from pynput import keyboard
 from scripts.endpoint_reader import read_endpoints
 from scripts.http_requests import HTTPRequester
 from scripts.availability import AvailabilityMetrics
@@ -11,10 +11,6 @@ class RunState:
     '''Class to hold run state'''
     def __init__(self):
         self.is_running = True
-
-    def is_running(self):
-        '''Checks whether program should continue to run'''
-        return self.is_running
 
     def pause(self):
         '''Pauses program'''

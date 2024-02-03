@@ -20,3 +20,7 @@ python -m unittest testcase.test_availability
 python -m unittest testcase.test_endpoint_reader
 
 python -m unittest testcase.test_http_requests
+
+#### Run pylint
+
+pylint --fail-under 9 **/*.py
