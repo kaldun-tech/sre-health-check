@@ -3,6 +3,8 @@ from argparse import ArgumentParser
 import sys
 import time
 from pynput import keyboard
+from pynput.keyboard import Key
+from pynput.keyboard import KeyCode
 from scripts.endpoint_reader import read_endpoints
 from scripts.http_requests import HTTPRequester
 from scripts.availability import AvailabilityMetrics
@@ -22,14 +24,15 @@ class RunState:
         self.is_running = True
         print('Execution resumed, press p to pause or Esc to quit...')
 
-    def on_release(self, key):
-        '''Listens for key press'''
-        if key == keyboard.Key.esc or key.char == 'x':
+    def on_release(self, key: Key | KeyCode):
+        '''Listens for key press
+        Argument: key user released'''
+        if key == Key.esc or isinstance(key, KeyCode) and key.char == 'x':
             # Exit
             sys.exit(0)
-        elif key == keyboard.Key.pause or key.char == 'p':
+        elif key == Key.pause or isinstance(key, KeyCode) and key.char == 'p':
             self.pause()
-        elif key == keyboard.Key.space or key.char == ' ':
+        elif key == Key.space or isinstance(key, KeyCode) and key.char == ' ':
             self.resume()
 
 

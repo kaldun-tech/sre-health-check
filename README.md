@@ -9,7 +9,7 @@ pip install -r requirements.txt
 #### Run main script
 python main.py
 
-Exit with CTRL + C
+Use p to pause, space to unpause, or x to exit.
 
 #### Run test cases
 python -m unittest testcase.test_availability
