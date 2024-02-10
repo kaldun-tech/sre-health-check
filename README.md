@@ -12,6 +12,8 @@ python main.py
 Use p to pause, space to unpause, or x to exit.
 
 #### Run test cases
+python -m unittest discover
+
 python -m unittest testcase.test_availability
 
 python -m unittest testcase.test_endpoint_reader
