@@ -20,7 +20,7 @@ python -m unittest testcase.test_http_requests
 
 #### Run pylint
 
-pylint --fail-under 9 **/*.py
+python -m pylint --fail-under 9 **/*.py
 
 #### TODO list:
 

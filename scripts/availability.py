@@ -71,4 +71,3 @@ class AvailabilityMetrics():
         for domain in self.availability_dict:
             percent_available = self.get_percent_available(domain)
             print(f'{domain} has {percent_available}% availability percentage')
-            
