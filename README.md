@@ -1,5 +1,5 @@
 # sre-health-check
-Script reads REST endpoints from YAML file, queries them repeatedly, computes and reports the percent uptime for domain.
+This script reads REST endpoints from YAML file, queries them repeatedly, computes and reports the percent uptime for domain.
 
 An endpoint is considered UP if response is 200-299 and latency is less than 500 milliseconds.
 
